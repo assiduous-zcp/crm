@@ -29,7 +29,14 @@ function logout() {
 
 
 function openPasswordModifyDialog() {
+    $("input[name='oldPassword']").val("");
+    $("input[name='newPassword']").val("");
+    $("input[name='confirmPassword']").val("");
     $("#dlg").dialog("open").dialog("setTitle","密码修改");
+}
+
+function closePasswordModifyDialog() {
+    $("#dlg").dialog("close");
 }
 
 function modifyPassword() {
