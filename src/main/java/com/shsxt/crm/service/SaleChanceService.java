@@ -21,15 +21,6 @@ import java.util.regex.Pattern;
 @Service
 public class SaleChanceService extends BaseService<SaleChance,Integer> {
 
-    public Map<String, Object> querySaleChancesByParams(SaleChanceQuery saleChanceQuery) {
-        Map<String, Object> result = new HashMap<String, Object>();
-        PageHelper.startPage(saleChanceQuery.getPage(), saleChanceQuery.getRows());
-        PageInfo<SaleChance> pageInfo = new PageInfo<>(selectByParams(saleChanceQuery));
-        result.put("total", pageInfo.getTotal());
-        result.put("rows", pageInfo.getList());
-        return result;
-    }
-
 
     public void saveSaleChance(SaleChance saleChance){
         /**
@@ -131,6 +122,25 @@ public class SaleChanceService extends BaseService<SaleChance,Integer> {
     public void deleteSaleChancesByIds(Integer[] ids){
         AssertUtil.isTrue(null==ids || ids.length==0,"请选择待删除的机会数据！");
         AssertUtil.isTrue(deleteBatch(ids)<ids.length,"机会数据删除失败！");
+
+    }
+
+
+
+
+    public void updateDevResultSaleChance(Integer sid,Integer devResult){
+
+        /**
+         * 参数校验
+         *      id  state   非空判断
+         */
+        AssertUtil.isTrue(null==sid,"待更新记录不存在!");
+        AssertUtil.isTrue(null==devResult,"网络异常请重试!");
+
+        SaleChance saleChance=selectByPrimaryKey(sid);
+        saleChance.setDevResult(devResult);
+
+        AssertUtil.isTrue(updateByPrimaryKeySelective(saleChance)<1,"机会数据更新失败！");
 
     }
 

@@ -32,7 +32,7 @@ public class SaleChanceController extends BaseController {
     @RequestMapping("list")
     @ResponseBody
     public Map<String,Object> querySaleChancesByParams(SaleChanceQuery saleChanceQuery){
-        return  saleChanceService.querySaleChancesByParams(saleChanceQuery);
+        return  saleChanceService.queryByParamsForDataGrid(saleChanceQuery);
     }
 
 
@@ -51,7 +51,15 @@ public class SaleChanceController extends BaseController {
     public ResultInfo updateSaleChance(SaleChance saleChance){
 
         saleChanceService.updateSaleChance(saleChance);
-        return success("机会数据添加成功");
+        return success("机会数据更新成功");
+    }
+
+    @RequestMapping("updateDevResult")
+    @ResponseBody
+    public ResultInfo updateDevResultSaleChance(Integer sid,Integer devResult){
+
+        saleChanceService.updateDevResultSaleChance(sid,devResult);
+        return success("机会数据更新成功");
     }
 
     @RequestMapping("delete")
