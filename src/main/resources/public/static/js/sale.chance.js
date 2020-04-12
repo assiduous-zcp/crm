@@ -74,7 +74,7 @@ function clearFormData() {
 function saveOrUpdateSaleChance() {
     var url=ctx+"/sale_chance/save";
     if(!isEmpty($("input[name='id']").val())){
-        url=ctx+"/sale_chance/update"
+        url=ctx+"/sale_chance/update";
     }
     $("#fm").form("submit",{
         url:url,
@@ -112,7 +112,7 @@ function openSaleChanceModifyDialog() {
 function deleteSaleChance() {
     var rows=$("#dg").datagrid("getSelections");
     if (rows.length==0){
-        $.messager.alert("来自crm","请选择待修改的机会数据！","error");
+        $.messager.alert("来自crm","请选择待删除的机会数据！","error");
         return;
     }
 
