@@ -1,8 +1,11 @@
 package com.shsxt.crm.service;
 
 import com.shsxt.base.BaseService;
+import com.shsxt.crm.dao.ModuleMapper;
+import com.shsxt.crm.dao.PermissionMapper;
 import com.shsxt.crm.dao.RoleMapper;
 import com.shsxt.crm.utils.AssertUtil;
+import com.shsxt.crm.vo.Permission;
 import com.shsxt.crm.vo.Role;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -20,6 +24,12 @@ public class RoleService extends BaseService<Role,Integer> {
 
     @Autowired
     private RoleMapper roleMapper;
+
+    @Autowired
+    private PermissionMapper permissionMapper;
+
+    @Autowired
+    private ModuleMapper moduleMapper;
 
     public List<Map<String,Object>> queryAllRoles(){
         return roleMapper.queryAllRoles();
@@ -61,6 +71,35 @@ public class RoleService extends BaseService<Role,Integer> {
     }
 
 
+    public void addGrant(Integer[] mids, Integer roleId) {
+        /**
+         * 核心表t_permission  t_role(校验角色存在)
+         *  如果角色存在原始权限  删除角色的原始权限
+         *      然后添加角色新的权限  批量添加权限记录到t_permission
+         */
+        Role temp=selectByPrimaryKey(roleId);
+        AssertUtil.isTrue(null==roleId || null==temp,"待授权角色不存在！");
 
 
+        int count=permissionMapper.countPermissionByRoleId(roleId);
+        if (count>0){
+            AssertUtil.isTrue(permissionMapper.deletePermissionByRoleId(roleId)<count,"权限分配失败！");
+
+        }
+        if (null!=mids && mids.length>0){
+            List<Permission> permissions=new ArrayList<Permission>();
+            for (Integer mid : mids){
+                Permission permission=new Permission();
+                permission.setCreateDate(new Date());
+                permission.setUpdateDate(new Date());
+                permission.setModuleId(mid);
+                permission.setRoleId(roleId);
+                permission.setAclValue(moduleMapper.selectByPrimaryKey(mid).getOptValue());
+
+                permissions.add(permission);
+            }
+            permissionMapper.insertBatch(permissions);
+        }
+
+    }
 }

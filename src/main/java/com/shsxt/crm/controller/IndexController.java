@@ -3,6 +3,7 @@ package com.shsxt.crm.controller;
 import com.github.pagehelper.PageException;
 import com.shsxt.base.BaseController;
 import com.shsxt.crm.exceptions.ParamsException;
+import com.shsxt.crm.service.PermissionService;
 import com.shsxt.crm.service.UserService;
 import com.shsxt.crm.utils.LoginUserUtil;
 import com.shsxt.crm.utils.UserIDBase64;
@@ -13,12 +14,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import javax.annotation.Resource;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 @Controller
 public class IndexController extends BaseController {
 
     @Resource
     private UserService userService;
+
+    @Resource
+    private PermissionService permissionService;
 
     /**
      * 登录页面
@@ -50,9 +55,11 @@ public class IndexController extends BaseController {
         }
         request.setAttribute("userName", UserIDBase64.decoderUserID(value));*/
         // 通过工具类得到登录后的用户id
-        int userId = LoginUserUtil.releaseUserIdFromCookie(request);
+        Integer userId = LoginUserUtil.releaseUserIdFromCookie(request);
+        List<String> permissions=permissionService.queryUserHasRolesHasPermissions(userId);
+        request.getSession().setAttribute("permissions",permissions);
         //通过用户id查询用户信息存到request作用域
-        request.setAttribute("user",userService.selectByPrimaryKey(userId));
+        request.setAttribute("user",userService.selectByPrimaryKey(userId));;
         return "main";
     }
 

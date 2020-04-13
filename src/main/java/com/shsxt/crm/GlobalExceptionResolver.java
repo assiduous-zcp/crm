@@ -1,6 +1,7 @@
 package com.shsxt.crm;
 
 import com.alibaba.fastjson.JSON;
+import com.shsxt.crm.exceptions.AuthFailedException;
 import com.shsxt.crm.exceptions.NoLoginException;
 import com.shsxt.crm.exceptions.ParamsException;
 import com.shsxt.crm.model.ResultInfo;
@@ -12,7 +13,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.io.PrintWriter;
 
 @Component
@@ -63,6 +63,11 @@ public class GlobalExceptionResolver implements HandlerExceptionResolver {
                     mv.addObject("msg",pe.getMsg());
                     mv.addObject("code",pe.getCode());
                 }
+                if (e instanceof AuthFailedException){
+                    AuthFailedException pe= (AuthFailedException) e;
+                    mv.addObject("msg",pe.getMsg());
+                    mv.addObject("code",pe.getCode());
+                }
                 return mv;
 
             }else{
@@ -75,6 +80,11 @@ public class GlobalExceptionResolver implements HandlerExceptionResolver {
 
                 if (e instanceof ParamsException){
                     ParamsException pe= (ParamsException) e;
+                    resultInfo.setCode(pe.getCode());
+                    resultInfo.setMsg(pe.getMsg());
+                }
+                if (e instanceof AuthFailedException){
+                    AuthFailedException pe= (AuthFailedException) e;
                     resultInfo.setCode(pe.getCode());
                     resultInfo.setMsg(pe.getMsg());
                 }
