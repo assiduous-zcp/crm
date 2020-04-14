@@ -83,7 +83,7 @@ function openAddModuleDialog() {
 function zTreeOnCheck(event, treeId, treeNode) {
     /*alert(treeNode.tId + ", " + treeNode.name + "," + treeNode.checked);*/
     var nodes = zTreeObj.getCheckedNodes(true);
-    console.log(nodes);
+    /*console.log(nodes);*/
     var mids="mids=";
     for (var i=0;i<nodes.length;i++){
         if (i<nodes.length-1){
@@ -93,7 +93,7 @@ function zTreeOnCheck(event, treeId, treeNode) {
         }
     }
 
-    console.log(mids);
+    /*console.log(mids);*/
 
     $.ajax({
         type:"post",

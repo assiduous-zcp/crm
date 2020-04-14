@@ -3,6 +3,7 @@ package com.shsxt.crm.controller;
 import com.github.pagehelper.PageException;
 import com.shsxt.base.BaseController;
 import com.shsxt.crm.exceptions.ParamsException;
+import com.shsxt.crm.service.ModuleService;
 import com.shsxt.crm.service.PermissionService;
 import com.shsxt.crm.service.UserService;
 import com.shsxt.crm.utils.LoginUserUtil;
@@ -24,6 +25,9 @@ public class IndexController extends BaseController {
 
     @Resource
     private PermissionService permissionService;
+
+    @Resource
+    private ModuleService moduleService;
 
     /**
      * 登录页面
@@ -58,9 +62,12 @@ public class IndexController extends BaseController {
         Integer userId = LoginUserUtil.releaseUserIdFromCookie(request);
         List<String> permissions=permissionService.queryUserHasRolesHasPermissions(userId);
         request.getSession().setAttribute("permissions",permissions);
+
+        request.getSession().setAttribute("modules",moduleService.queryUserHasRoleHasModuleDtos(userId));
+
         //通过用户id查询用户信息存到request作用域
         request.setAttribute("user",userService.selectByPrimaryKey(userId));;
-        return "main";
+        return "main_2.0";
     }
 
 }

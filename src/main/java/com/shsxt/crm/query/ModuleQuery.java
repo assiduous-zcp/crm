@@ -20,6 +20,17 @@ public class ModuleQuery extends BaseQuery {
     //上级菜单id
     private Integer pId;
 
+    //url
+    private String url;
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
     public Integer getpId() {
         return pId;
     }
