@@ -274,8 +274,16 @@
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
+    <update id="updateCustomerStateByIds">
+      update t_customer
+      set state=1
+      where id in
+      <foreach collection="list" item="item" open="(" close=")" separator=",">
+        #{item}
+      </foreach>
+    </update>
 
-  <select id="selectByParams" parameterType="com.shsxt.crm.query.CustomerQuery" resultMap="BaseResultMap">
+    <select id="selectByParams" parameterType="com.shsxt.crm.query.CustomerQuery" resultMap="BaseResultMap">
     select <include refid="Base_Column_List"/>
     from t_customer
     <where>
@@ -299,6 +307,19 @@
       select <include refid="Base_Column_List"/>
         from t_customer
         where is_valid=1 and name=#{name}
+    </select>
+    <select id="queryLossCustomers" resultType="com.shsxt.crm.vo.Customer">
+      select <include refid="Base_Column_List"/>
+      from t_customer c
+      where c.is_valid=1 and c.state=0
+      and date_add(c.create_date,interval 6 month) &lt; now()
+      and c.id not in (
+        select
+        distinct o.cus_id
+        from t_customer_order o
+        where o.state=1 and o.is_valid=1
+        and date_add(o.order_date,interval 6 month) &gt; now()
+      )
     </select>
 
 
