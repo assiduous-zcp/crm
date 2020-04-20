@@ -1,9 +1,12 @@
 package com.shsxt.crm.service;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.shsxt.base.BaseService;
 import com.shsxt.crm.dao.CustomerLossMapper;
 import com.shsxt.crm.dao.CustomerMapper;
 import com.shsxt.crm.dao.CustomerOrderMapper;
+import com.shsxt.crm.query.CustomerQuery;
 import com.shsxt.crm.utils.AssertUtil;
 import com.shsxt.crm.utils.PhoneUtil;
 import com.shsxt.crm.vo.Customer;
@@ -16,9 +19,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @SuppressWarnings("all")
 @Service
@@ -138,6 +139,48 @@ public class CustomerService extends BaseService<Customer,Integer> {
            AssertUtil.isTrue(customerLossMapper.insertBatch(customerLosses)<customerLosses.size(),"客户流失数据流转失败！");
            AssertUtil.isTrue(customerMapper.updateCustomerStateByIds(lossCusIds)<lossCusIds.size(),"客户流失数据流转失败！");
         }
+    }
+
+    public Map<String,Object> queryCustomerContributionByParams(CustomerQuery customerQuery){
+        Map<String,Object> result =new HashMap<String,Object>();
+        PageHelper.startPage(customerQuery.getPage(),customerQuery.getRows());
+        List<Map<String,Object>> list = customerMapper.queryCustomerContributionByParams(customerQuery);
+        PageInfo<Map<String,Object>> pageInfo = new PageInfo<Map<String,Object>>(list);
+        result.put("total", pageInfo.getTotal());
+        result.put("rows", pageInfo.getList());
+        return result;
+    }
+
+
+    public Map<String,Object> countCustomerMake(){
+        Map<String,Object> result=new HashMap<String,Object>();
+        List<Map<String,Object>> list =customerMapper.countCustomerMake();
+        List<String> data1List=new ArrayList<String>();
+        List<Integer> data2List=new ArrayList<Integer>();
+        list.forEach(m->{
+            data1List.add(m.get("level").toString());
+            data2List.add(Integer.parseInt(m.get("total")+""));
+        });
+        result.put("data1",data1List);
+        result.put("data2",data2List);
+        return result;
+    }
+
+    public Map<String,Object> countCustomerMake02(){
+        Map<String,Object> result=new HashMap<String,Object>();
+        List<Map<String,Object>> list =customerMapper.countCustomerMake();
+        List<String> data1List=new ArrayList<String>();
+        List<Map<String,Object>> data2List=new ArrayList<Map<String,Object>>();
+        list.forEach(m->{
+            data1List.add(m.get("level").toString());
+            Map<String,Object> temp=new HashMap<String,Object>();
+            temp.put("name",m.get("level"));
+            temp.put("value",m.get("total"));
+            data2List.add(temp);
+        });
+        result.put("data1",data1List);
+        result.put("data2",data2List);
+        return result;
     }
 
 

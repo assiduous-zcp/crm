@@ -136,4 +136,10 @@
     </where>
     group by u.id
   </select>
+  <select id="queryAllCustomerManager" resultType="map">
+    select u.id,u.user_name as name
+    from t_user u left join t_user_role ur on u.id=ur.user_id
+    left join t_role r on ur.role_id=r.id
+    where r.is_valid=1 and r.role_name="客户经理"
+  </select>
 </mapper>

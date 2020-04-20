@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -115,7 +116,11 @@ public class UserController extends BaseController {
 
 
 
-
+    @RequestMapping("user/queryAllCustomerManager")
+    @ResponseBody
+    public List<Map<String,Object>> queryAllCustomerManager(){
+        return userService.queryAllCustomerManager();
+    }
 
 
 
